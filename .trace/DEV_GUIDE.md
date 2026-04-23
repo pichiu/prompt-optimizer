@@ -407,17 +407,9 @@ pnpm typecheck:core / pnpm typecheck:ui / pnpm typecheck:web
 
 ### 7.4 Commit 訊息格式
 
-遵循 Conventional Commits：
+遵循 Conventional Commits：`feat(ui): add template preview`、`fix(core): resolve timeout`、`docs: update guide`。
 
-```
-feat(ui): add template preview component
-fix(core): resolve API timeout issue
-refactor(desktop): simplify IPC handler registration
-build: upgrade electron to v35
-docs: update dev guide
-```
-
-提交前確保：`pnpm lint` 通過 + `pnpm test` 通過。
+提交前確保：`pnpm lint` + `pnpm test` 均通過。
 
 ### 7.5 版本管理
 
@@ -473,29 +465,17 @@ docker exec -it prompt-optimizer sh  # 進入容器 shell
 docker restart prompt-optimizer      # 重啟容器
 ```
 
-### Dockerfile 多階段建置說明
+### Dockerfile 多階段建置
 
-| 階段 | 說明 |
-|------|------|
-| `base` | Node.js 22 + pnpm 安裝 |
-| `builder` | 安裝依賴、執行 monorepo build |
-| `production` | 最終映像，只含 nginx 靜態資源 + supervisord + MCP server |
-
-> `dev.md` 中說 3 個階段（base/builder/production），但 ⚠️ 實際 Dockerfile 可能只有 2 個（base/build），以實際程式碼為準。
+`base`（Node 22 + pnpm）→ `builder`（monorepo build）→ `production`（nginx + supervisord + MCP server）。⚠️ `dev.md` 描述 3 個階段，以實際 Dockerfile 為準。
 
 ### Docker + MCP Server
 
-Docker 映像中，MCP Server 與 Web 應用在**同一個容器**中執行，由 supervisord 管理。  
-MCP endpoint 路徑：`http://localhost:80/mcp`
-
-Docker Compose 方式：
+MCP Server 與 Web 應用在**同一容器**中執行（supervisord 管理），endpoint：`http://localhost:80/mcp`。
 
 ```bash
-docker compose up -d
-docker compose logs -f
+docker compose up -d && docker compose logs -f
 ```
-
-> 設定檔：`/home/user/prompt-optimizer/docker-compose.yml`
 
 ---
 
