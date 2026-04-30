@@ -177,6 +177,12 @@ class TextAdapterRegistry {
 
 > **OpenAI-compatible Provider 共用基礎類別**：DeepSeek、SiliconFlow、Ollama、OpenRouter、ModelScope、Zhipu、DashScope 都繼承 `OpenAIAdapter`，只覆寫 `getProvider()` 改 `baseURL` 和 metadata。新增一個 OpenAI-compatible Provider 只需要 ~30 行程式碼。
 
+<!-- 以下段落更新於 2026-04-30, commit range: a9cbcd4..3824b64 -->
+> **DeepSeek v4 升級（2026-04-30）**：DeepSeek adapter 的 `getModels()` 改為靜態回傳 v4 模型清單（`deepseek-v4-flash`、`deepseek-v4-pro`），並新增 `thinking_type` 參數（`enabled` / `disabled`）控制思考模式；舊的 v3.x 模型 ID 已不再列入預設。Provider id 仍為 `deepseek`，介面契約不變。
+>
+> **OpenAI Image Provider 模型刷新（2026-04-30）**：`packages/core/src/services/image/adapters/openai.ts` 更新預設模型清單；同期 7 個 image adapters 修正 image prompt 的 JSON wrapper 邊界處理（`fix(core): clarify image prompt JSON wrapper handling`）。
+<!-- 更新結束 -->
+
 ### LLMService 如何選 Adapter
 
 ```typescript
