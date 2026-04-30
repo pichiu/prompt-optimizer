@@ -1,6 +1,8 @@
 # API_SURFACE.md — API 與介面參考
 
-> 版本：2.9.4 | 更新日期：2026-04-23 | 語言：繁體中文（術語保留英文原文）
+> 版本：2.9.6 | 更新日期：2026-04-30（增量更新基於 commit `3824b64`） | 語言：繁體中文（術語保留英文原文）
+>
+> 註（2026-04-30）：本次無 MCP / Core service / IPC channel 介面層異動；DeepSeek adapter 升級到 v4 模型支援，但 provider id 仍為 `deepseek`，介面不變。前端新增 `/favorites` routed page 屬於 UI 層導覽，非對外 API。
 
 ---
 
