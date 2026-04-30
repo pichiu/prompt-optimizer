@@ -1,6 +1,6 @@
 # Prompt Optimizer — 系統架構說明
 
-> 版本：2.9.4 · 更新日期：2026-04-23 · 授權：AGPL-3.0-only
+> 版本：2.9.6 · 更新日期：2026-04-30（增量更新基於 commit `3824b64`） · 授權：AGPL-3.0-only
 
 ---
 
@@ -337,6 +337,8 @@ graph TB
 
 ## 9. 功能模式與 Session Store 對應
 
+> 路由實際定義位於 `packages/ui/src/router/index.ts`；2026-04-30 新增 `workspaceRoutes.ts` 收斂 workspace 路徑解析與預設 path 常數（`DEFAULT_WORKSPACE_PATH = '/basic/system'`）。
+
 | 功能模式 | Session Store | 路由 | 說明 |
 |----------|---------------|------|------|
 | Basic / System | `useBasicSystemSession` | `/basic/system` | 優化 system prompt |
@@ -345,7 +347,10 @@ graph TB
 | Pro / Variable | `useProVariableSession` | `/pro/variable` | 批量變數替換 |
 | Image / Text2Image | `useImageText2ImageSession` | `/image/text2image` | 文生圖優化 |
 | Image / Image2Image | `useImageImage2ImageSession` | `/image/image2image` | 圖生圖優化 |
-| Image / Multi-Image | `useImageMultiImageSession` | `/image/multi` | 多圖模式 |
+| Image / Multi-Image | `useImageMultiImageSession` | `/image/multiimage` | 多圖模式（修正：先前文件誤記為 `/image/multi`） |
+| Favorites（routed page） | — | `/favorites` | 2026-04-30: 獨立路由的收藏管理頁，由 `components/favorites/FavoritesPage.vue` 載入 |
+
+**Workspace ↔ Favorites 切換**：`components/app-layout/workspaceRouteSwitch.ts`（2026-04-30 新增）封裝 router push 與 session activate 的協同邏輯。
 
 ---
 
