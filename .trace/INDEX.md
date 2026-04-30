@@ -83,6 +83,8 @@ docker run -d -p 80:80 -e ACCESS_PASSWORD=xxx linshen/prompt-optimizer:latest
 | [CODEBASE_MAP.md](CODEBASE_MAP.md) | 程式碼地圖、目錄說明、「我想改 X 看哪裡」 |
 | [DATA_MODEL.md](DATA_MODEL.md) | 資料模型、ER diagram、儲存策略 |
 | [API_SURFACE.md](API_SURFACE.md) | MCP 工具 API、Core 服務介面、IPC channels |
+| [LLM_INTEGRATION_FLOW.md](LLM_INTEGRATION_FLOW.md) | LLM 呼叫深度解析、Adapter Pattern、端對端串流範例 |
+| [TEMPLATE_CATALOG.md](TEMPLATE_CATALOG.md) | 50+ 內建 templates 完整目錄、八大類別、設計模式 |
 | [DEV_GUIDE.md](DEV_GUIDE.md) | 開發環境設定、測試方式、Debugging 技巧 |
 | [DISCOVERY_LOG.md](DISCOVERY_LOG.md) | 探索紀錄、文件落差、TODO/技術債 |
 | [_context/](./\_context/) | Stage 1-2 中繼分析資料（可刪除） |
