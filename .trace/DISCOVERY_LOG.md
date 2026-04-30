@@ -160,3 +160,54 @@ export function getBuiltinModelIds(): string[] {
 ---
 
 *本文件由靜態程式碼分析 + 線上資料搜尋綜合產出，標注 ⚠️ 未驗證 的項目需實際執行程式碼或詢問維護者確認。*
+
+---
+
+## 8. 增量更新發現（2026-04-30）
+
+> Base commit 範圍：`a9cbcd4..3824b64`（25 個 non-merge commits，180 檔案變更）。完整變更清單見 `_context/changelog.md`。
+
+### 8.1 重要發現
+
+**Favorites 路由化重構**
+
+- 原本 favorites 是內嵌在 `BasicMode` / `ContextMode` 等 Workspace 元件內的區塊；2026-04-30 拆解為獨立的 `/favorites` routed page（`components/favorites/FavoritesPage.vue`）
+- 同時新增 7 個拆解元件（`FavoriteDetailPanel`、`FavoriteEditorForm`、`FavoriteImportPanel`、`FavoriteLibraryWorkspace`、`FavoriteReproducibilityDisplay`、`FavoriteReproducibilityEditor`、`FavoriteWorkspaceListItem`），舊有的 `FavoriteCard.vue` 被刪除
+- 新增 `router/workspaceRoutes.ts` 集中 workspace 路由解析與 `DEFAULT_WORKSPACE_PATH` 常數；同時新增 `app-layout/workspaceRouteSwitch.ts` 處理路由切換與 session activate 的協同
+- 新增三個 utils：`favorite-mode.ts`、`favorite-reproducibility.ts`、`external-data-loading.ts`，把 favorites 的領域邏輯從 component 抽出
+- 新增 `common/WorkspaceUtilityMenu.vue`，配合 workspace clear content 工具
+
+**SOUL 模板新增（OpenClaw / Hermes）**
+
+- 新增 6 個模板（zh + en），分別屬於 `optimize`（`soul-{openclaw,hermes}-compose`）與 `iterate`（`soul-iterate`）類別
+- SOUL.md 是「agent 長期人格設定檔」概念，與一般 system prompt 不同；OpenClaw 偏陪伴感/連續性，Hermes 偏判斷力/分寸（詳見 `TEMPLATE_CATALOG.md`）
+- `soul-iterate` 設計上會在輸入包含使用者側資訊時，把 SOUL.md 拆出 USER.md（使用 `----- FILE: ... -----` 包裹格式）
+- 新增 `packages/core/tests/unit/template/soul-template-registration.test.ts`（自動測試）與 `soul-template-manual-acceptance.md`（手動驗收清單）兩種驗證手段並用
+- 推測這些模板是給 Asus 內部 OpenClaw / Hermes 框架專案使用 — `soul-iterate.ts` 的範例文案中明確提到「更接近 Hermes 風格，但別寫項目規則」⚠️ 未向維護者確認用途
+
+**DeepSeek v4 升級**
+
+- DeepSeek adapter 改為靜態回傳 v4 模型清單（`deepseek-v4-flash`、`deepseek-v4-pro`），均支援 `supportsTools` + `supportsReasoning`，`maxContextLength = 1,000,000`
+- 新增 `thinking_type` 參數（`enabled` / `disabled`），預設 `disabled`；當 thinking 啟用時 `temperature` / `top_p` 失效
+- `reasoning_effort` 參數允許 `high` / `max`
+- v3.x 模型 ID 已不在預設清單；舊資料 ⚠️ 未驗證 是否有 migration 處理
+
+### 8.2 落差分析（既有文件 vs 程式碼）
+
+- **ARCHITECTURE.md §9 路由表**先前誤記 `Image / Multi-Image` 路由為 `/image/multi`，實際為 `/image/multiimage`（`router/index.ts:60-61`）— 本次更新已順手修正
+- **TEMPLATE_CATALOG.md** 數量統計表格：`optimize` 從 6 修正為 10、`iterate` 從 2 修正為 4
+
+### 8.3 新增的疑問
+
+| # | 問題 | 影響範圍 |
+|---|------|----------|
+| 8 | `favorite-reproducibility.ts` 是否處理跨版本 favorite 重現的 schema migration？舊版 favorite 在新 reproducibility 邏輯下能否保留？ | favorites 資料相容性 |
+| 9 | `workspaceRouteSwitch.ts` 在 Electron 環境下（hash router）的瀏覽前進/後退是否正確 sync session 狀態？ | Electron UX |
+| 10 | DeepSeek v4 升級後，舊有的 v3.x model ID 在已儲存的 history / favorite 中如何處理？是否有 fallback？ | 歷史資料相容性 |
+| 11 | SOUL 模板的 `templateType` 為 `optimize` / `iterate`，會出現在所有 system / iterate 下拉中。是否需要 UI 層加 tag 篩選讓使用者區分一般 system prompt 與 SOUL.md 場景？ | 使用者體驗 |
+
+### 8.4 本次未深入調查的區域
+
+- 13 個 image-optimize 模板的內容修訂（`packages/core/src/services/template/default-templates/image-optimize/`）— diff 大部分集中於此，本次只標記變動，未逐字核對文案差異
+- 7 個 image adapters 的 JSON wrapper 邊界處理修正細節（`d315c4d`）— 確認修正點但未逐 adapter 比對
+- i18n 12 個 locales 檔案的補齊內容差異
