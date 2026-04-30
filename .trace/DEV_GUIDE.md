@@ -232,6 +232,15 @@ RUN_REAL_API=1 RUN_DASHSCOPE_RESPONSES_REAL_API=1 pnpm -F @prompt-optimizer/core
 相關測試檔：
 - `packages/core/tests/integration/real-api.test.ts`
 - `packages/core/tests/integration/llm-service.spec.ts`
+- `packages/core/tests/integration/llm/deepseek-live.integration.test.ts`（2026-04-30 新增，DeepSeek v4 模型實機驗證）
+
+<!-- 以下段落更新於 2026-04-30, commit range: a9cbcd4..3824b64 -->
+**新增的測試（2026-04-30）**：
+- E2E：`tests/e2e/session-persistence/workspace-clear-content.spec.ts`（驗證 workspace clear content 工具與 Prompt Garden import 前清空流程）
+- Core 單元：`packages/core/tests/unit/llm/deepseek-adapter.test.ts`、`packages/core/tests/unit/template/soul-template-registration.test.ts`
+- UI 單元：`packages/ui/tests/unit/components/FavoritesPage.spec.ts` 等 11 個 favorites/route 相關 spec
+- 手動驗收：`packages/core/tests/unit/template/soul-template-manual-acceptance.md`（SOUL 模板的人工驗收清單）
+<!-- 更新結束 -->
 
 ---
 
