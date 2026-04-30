@@ -29,6 +29,9 @@ prompt-optimizer/                    # Monorepo 根目錄 (pnpm workspace)
 │   │       │   ├── shared/          # 共用型別（BaseProvider 等）
 │   │       │   ├── storage/         # 儲存抽象層（4種實作）
 │   │       │   ├── template/        # TemplateManager + Processor + 內建模板
+│   │       │   │                    # 2026-04-30: 新增 6 個 SOUL 模板（OpenClaw/Hermes 系統用）
+│   │       │   │                    # default-templates/optimize/soul-{hermes,openclaw}-compose{,_en}.ts
+│   │       │   │                    # default-templates/iterate/soul-iterate{,_en}.ts
 │   │       │   ├── variable-extraction/      # 自動提取 prompt 變數
 │   │       │   └── variable-value-generation/ # 生成測試變數值
 │   │       ├── types/               # 全局型別
@@ -36,26 +39,38 @@ prompt-optimizer/                    # Monorepo 根目錄 (pnpm workspace)
 │   │
 │   ├── ui/                          # Vue 3 UI Library（@prompt-optimizer/ui）
 │   │   └── src/
-│   │       ├── components/          # ~65 個 Vue 組件
+│   │       ├── components/          # ~70 個 Vue 組件
 │   │       │   ├── app-layout/      # PromptOptimizerApp.vue（主應用）, AppCoreNav, AppHeaderActions
+│   │       │   │                    # 2026-04-30: + workspaceRouteSwitch.ts（路由與 session 切換 helper）
 │   │       │   ├── basic-mode/      # Basic 模式 Workspace 組件
 │   │       │   ├── context-mode/    # Pro 多輪對話 Workspace
 │   │       │   ├── evaluation/      # 評估相關組件
+│   │       │   ├── favorites/       # 2026-04-30: 新增 routed Favorites page
+│   │       │   │                    # FavoritesPage.vue（獨立路由 /favorites）
+│   │       │   │                    # favorites-page-context.ts
 │   │       │   ├── image-mode/      # 圖像模式 Workspace
 │   │       │   ├── variable/        # 變數管理組件
 │   │       │   ├── variable-extraction/ # 變數提取組件
+│   │       │   ├── common/          # 共用組件（含 2026-04-30 新增 WorkspaceUtilityMenu.vue）
+│   │       │   ├── Favorite*.vue    # 多個 Favorite 拆解元件（Manager/EditorForm/DetailPanel/
+│   │       │   │                    # ImportPanel/LibraryWorkspace/Reproducibility{Display,Editor}/
+│   │       │   │                    # WorkspaceListItem，2026-04-30 大改造）
 │   │       │   └── ...              # 其他共用組件
 │   │       ├── composables/         # Vue Composition API hooks（業務邏輯）
-│   │       │   ├── app/             # useAppFavorite, useAppHistoryRestore
-│   │       │   ├── prompt/          # usePromptOptimizer（核心優化邏輯）
+│   │       │   ├── app/             # useAppFavorite, useAppHistoryRestore, useAppPromptGardenImport
+│   │       │   ├── prompt/          # usePromptOptimizer（核心優化邏輯）, useContextUserOptimization
 │   │       │   ├── session/         # session 相關 composables
 │   │       │   ├── system/          # useAppInitializer（服務初始化）
-│   │       │   └── ...
+│   │       │   ├── ui/              # useToast 等 UI 工具
+│   │       │   └── workspaces/      # 2026-04-30: useBasicWorkspaceLogic 等
 │   │       ├── stores/              # Pinia stores
 │   │       │   └── session/         # 每個功能模式的 session store
+│   │       ├── utils/               # 2026-04-30: + favorite-mode.ts, favorite-reproducibility.ts,
+│   │       │                        # external-data-loading.ts
 │   │       ├── i18n/locales/        # 多語言 (zh-CN, zh-TW, en-US)
 │   │       ├── plugins/             # pinia.ts, i18n.ts（服務注入點）
 │   │       ├── router/              # Vue Router 路由配置
+│   │       │                        # 2026-04-30: + workspaceRoutes.ts（routing helpers + DEFAULT_WORKSPACE_PATH）
 │   │       └── config/              # Naive UI 主題設定
 │   │
 │   ├── web/                         # Vite SPA（Web App 部署目標）
@@ -122,6 +137,8 @@ prompt-optimizer/                    # Monorepo 根目錄 (pnpm workspace)
 | 修改 Template 渲染邏輯 | `packages/core/src/services/template/` | `processor.ts` |
 | 修改 UI 主介面佈局 | `packages/ui/src/components/app-layout/` | `PromptOptimizerApp.vue`, `MainLayout.vue` |
 | 新增功能模式（如新 Workspace） | `packages/ui/src/components/` + `stores/session/` + `router/` | 新增 Workspace 組件 + session store + 路由 |
+| 修改 Favorites 收藏管理 UI | `packages/ui/src/components/favorites/` + `Favorite*.vue` | `FavoritesPage.vue` 路由頁；`FavoriteManager`/`FavoriteLibraryWorkspace` 等元件（2026-04-30 拆解） |
+| 加入新的 SOUL / 結構化人格模板 | `packages/core/src/services/template/default-templates/` | `optimize/soul-{name}-compose.ts`（中英版）+ 註冊到 `default-templates/index.ts` |
 | 修改歷史記錄 | `packages/core/src/services/history/` | `manager.ts`, `types.ts` |
 | 修改資料匯入/匯出 | `packages/core/src/services/data/` | `manager.ts` |
 | 修改評估邏輯 | `packages/core/src/services/evaluation/` | `service.ts`, `types.ts` |
