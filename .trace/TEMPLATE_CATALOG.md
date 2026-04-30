@@ -84,12 +84,15 @@ graph TB
     A --> A1[general-optimize]
     A --> A2[output-format-optimize]
     A --> A3[analytical-optimize]
+    A --> A4[soul-hermes-compose]
+    A --> A5[soul-openclaw-compose]
 
     B --> B1[user-prompt-basic]
     B --> B2[user-prompt-planning]
     B --> B3[user-prompt-professional]
 
     C --> C1[iterate]
+    C --> C2[soul-iterate]
 
     D --> D1[contextOptimize<br/>系統提示優化]
     D --> D2[conversationMessageOptimize<br/>對話訊息優化]
@@ -113,9 +116,9 @@ graph TB
 
 | 類別 | TemplateType | 數量（含中英） |
 |------|--------------|----------------|
-| System Prompt 優化 | `optimize` | 6 |
+| System Prompt 優化 | `optimize` | 10 |
 | User Prompt 優化 | `userOptimize` | 6 |
-| 迭代優化 | `iterate` | 2 |
+| 迭代優化 | `iterate` | 4 |
 | Pro 系統提示優化 | `contextSystemOptimize` | 6 |
 | Pro 對話訊息優化 | `conversationMessageOptimize` | 6 |
 | Pro 上下文迭代 | `contextIterate` | 2 |
@@ -168,6 +171,54 @@ graph TB
 请基于以上模板，优化并扩展以下prompt，确保内容专业、完整且结构清晰...
 ```
 
+<!-- 以下段落新增於 2026-04-30, commit range: a9cbcd4..3824b64 -->
+
+#### SOUL 結構化模板（人格檔生成）
+
+兩組專屬於 **SOUL.md** 場景的 optimize 模板。SOUL.md 不是一次性的任務 prompt，而是 agent 的**長期人格設定檔**：定義「這個 agent 是誰、怎麼說話、會主動到什麼程度、面對不確定性的處理傾向」。這兩個模板把使用者一句需求或零散草稿，整理成可直接存檔的 SOUL.md。
+
+| ID | 名稱 | 風格傾向 |
+|----|------|----------|
+| `soul-openclaw-compose` / `soul-openclaw-compose_en` | OpenClaw-SOUL 結構化模板 | 關係感、陪伴感、聲音、主動性、連續性 |
+| `soul-hermes-compose` / `soul-hermes-compose_en` | Hermes-SOUL 結構化模板 | durable identity、語氣穩定、判斷傾向、分寸與謹慎性 |
+
+**OpenClaw vs Hermes 風格差異**：
+
+| 面向 | OpenClaw | Hermes |
+|------|----------|--------|
+| 核心強調 | 關係感、陪伴感、主動性、連續性 | 長期身份穩定、判斷力、外部動作謹慎性 |
+| 常用骨架欄位 | Core Identity / Default Behavior / Speaking Style / Relationship / Interaction Rules / Task Behavior / Example Lines / Interaction Notes / Continuity | Core Identity / Communication Defaults / Default Behavior / Interaction Style / Judgment Style / Task Behavior / Example Lines / Interaction Notes |
+| 適用情境 | 需要陪伴感、長期關係、固定口頭風格的角色扮演型助手 | 個人助理、profile 級長期 agent，需要在不確定性與分歧中保持判斷 |
+| 界限處理 | 只在用戶要求時寫窄範圍的互動分寸或角色一致性 | 偏向少量關係界限、外部動作謹慎性、判斷原則 |
+| Continuity / Judgment | 顯式 Continuity 一節（陪伴感場景才出現） | 顯式 Judgment Style 一節（不確定性處理） |
+
+**共同設計原則**（兩者皆遵循）：
+
+- **Simple 格式**（純字串 system prompt），結構與一般 optimize 模板同構
+- 預設輸出單一檔案 SOUL.md 正文，不加程式碼塊、不加前言/後記
+- 偵測到使用者側資訊（稱呼、偏好、禁忌）時可拆出 `USER.md`，輸出格式：
+  ```
+  ----- FILE: SOUL.md -----
+  [內容]
+  ----- END FILE -----
+
+  ----- FILE: USER.md -----
+  [內容]
+  ----- END FILE -----
+  ```
+- 強制 4–6 個短節，不為「完整」補齊空模組
+- 不寫 repo 規則、工具步驟、路徑資訊（避免汙染 profile 級檔案）
+- 預設不補泛道德/拒絕規則，除非使用者明確要求
+
+**資訊來源**：
+- `packages/core/src/services/template/default-templates/optimize/soul-openclaw-compose.ts`（+ `_en.ts`）
+- `packages/core/src/services/template/default-templates/optimize/soul-hermes-compose.ts`（+ `_en.ts`）
+- 註冊處：`packages/core/src/services/template/default-templates/index.ts`
+
+由於 `templateType: 'optimize'`，這兩個模板會自動列入 Basic 模式的 system prompt 優化下拉選單，使用者可直接選用，無需特殊觸發。
+
+<!-- 更新結束 -->
+
 ---
 
 ### 二、`userOptimize` — User Prompt 優化
@@ -205,8 +256,12 @@ Please output the optimized prompt:
 |----|------|------|
 | `iterate` | 通用迭代（zh） | Advanced 格式，附 3 個示範例子防止 LLM 誤解為「執行任務」 |
 | `iterate_en` | 通用迭代（en） | 英文版本 |
+| `soul-iterate` | SOUL 定向迭代模板（zh） | Advanced 格式，與 `iterate` 同構但**專屬於 SOUL.md 風格收斂**：保留原結構/核心人格，只改動使用者要求的章節；可在迭代過程中把使用者側資訊（稱呼、偏好）拆出為獨立 `USER.md` |
+| `soul-iterate_en` | SOUL 定向迭代模板（en） | 英文版本 |
 
-**關鍵設計**：System prompt 用「正確 vs 錯誤」對比例子明確指示 LLM。
+**`soul-iterate` 與通用 `iterate` 的差異**：兩者輸入變數相同（`lastOptimizedPrompt`、`iterateInput`），但 system prompt 著重於人格檔特殊性 — 預設保留原結構與核心人格、不重寫整篇、可向 OpenClaw/Hermes/Generic 風格收斂、必要時拆檔。資訊來源：`packages/core/src/services/template/default-templates/iterate/soul-iterate.ts`（+ `_en.ts`）。
+
+**關鍵設計**（通用 `iterate`）：System prompt 用「正確 vs 錯誤」對比例子明確指示 LLM。
 
 ```
 ## 理解示例
