@@ -110,6 +110,8 @@ docker run -d -p 80:80 -e ACCESS_PASSWORD=xxx linshen/prompt-optimizer:latest
 | **runtime_config** | Docker 部署時由 nginx 動態注入的 `window.runtime_config`，儲存 API keys 等設定 |
 | **TemplateType** | template 的用途分類，決定它在哪個下拉選單中顯示（如 `optimize`、`iterate`、`evaluation`） |
 | **Session Store** | 每種功能子模式（basic-system、pro-variable 等）的 Pinia store，管理該模式的 UI 狀態 |
+| **SOUL.md** | 長期人格設定檔；新增的 `soul-*-compose` / `soul-iterate` 模板協助生成此類檔案（2026-04-30） |
+| **OpenClaw / Hermes** | 兩種 SOUL.md 風格：OpenClaw 強調陪伴感、互動規則；Hermes 強調 durable identity、判斷傾向 |
 
 ---
 
