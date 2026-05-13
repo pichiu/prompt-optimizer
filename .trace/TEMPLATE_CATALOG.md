@@ -232,6 +232,21 @@ graph TB
 | `user-prompt-basic` | 基礎優化 | 消除歧義、補充背景和約束、強調關鍵資訊 |
 | `user-prompt-planning` | 步驟規劃 | 把模糊需求轉成 Role / Background / Key Steps / Output Requirements 結構化計畫 |
 | `user-prompt-professional` | 專業場景優化 | 針對特定領域加強精確度與專業術語 |
+| `perf-review-cloud-engineer` | 雲端工程師績效評量撰寫 | 將工作筆記、事件、觀察轉化為自評或互評文字，涵蓋 k8s、LLM 推論引擎（vLLM、SGLang、Ollama）等技術能力與六大軟實力維度；自動識別自評/互評脈絡 |
+
+<!-- 新增於 2026-05-13, perf-review-cloud-engineer.ts + _en.ts -->
+
+**`perf-review-cloud-engineer` 設計細節**：
+
+此模板針對雲端/MLOps 工程師在自評（self-evaluation）和互評（peer review）場景下的寫作需求：
+
+- **脈絡自動識別**：第一人稱素材 → 自評；第三人稱觀察 → 互評；混合輸入 → 分段輸出
+- **技術維度**：Kubernetes（Operator、workload、效能調優）、LLM 推論引擎（vLLM、SGLang、Ollama）、可觀測性（logs、monitoring、incident）
+- **軟實力維度**：執行與交付、團隊協作、溝通與人際、領導與帶領、抗壓與適應
+- **寫作原則**：具體行為描述優先於空泛形容詞；不補湊沒有素材依據的維度
+- **檔案位置**：`packages/core/src/services/template/default-templates/user-optimize/perf-review-cloud-engineer.ts`（+ `_en.ts`）
+
+<!-- 新增結束 -->
 
 **設計**：**Advanced 格式**，使用 Mustache + JSON 包裹防注入：
 

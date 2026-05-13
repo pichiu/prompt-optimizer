@@ -44,6 +44,8 @@ import { user_prompt_basic } from './user-optimize/user-prompt-basic';
 import { user_prompt_basic_en } from './user-optimize/user-prompt-basic_en';
 import { user_prompt_planning } from './user-optimize/user-prompt-planning';
 import { user_prompt_planning_en } from './user-optimize/user-prompt-planning_en';
+import { perf_review_cloud_engineer } from './user-optimize/perf-review-cloud-engineer';
+import { perf_review_cloud_engineer_en } from './user-optimize/perf-review-cloud-engineer_en';
 
 // 图像优化模板（重构后的目录结构）
 // 文生图
@@ -185,6 +187,8 @@ export const ALL_TEMPLATES = {
   user_prompt_basic_en,
   user_prompt_planning,
   user_prompt_planning_en,
+  perf_review_cloud_engineer,
+  perf_review_cloud_engineer_en,
   // 图像优化模板
   image_general_optimize,
   image_general_optimize_en,
